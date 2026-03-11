@@ -31,6 +31,10 @@ string postfix();
 string prefix();
 string infix();
 
+void test(); 
+void printStack(Node* head);
+void printQueue(Node* head);
+
 using namespace std;
 
 int main(){
@@ -43,29 +47,35 @@ int main(){
   Node* queueB = nullptr;//back of queue LL --> queue is output
   Node* treeH = nullptr;//for the tree stack. a stack of trees.
   vector<string>* exp = new vector<string>();//gonna make a vector to pass into Shunting yard function
+
   //lets get to it, then
   cout<<"please enter your expression (infix notation)"<<endl;
   getline(cin, expression);
   cin.clear();
   cout<<"oookay, "<<expression<<endl;
-  //do shunting yard stuff --> stack and queue --> postfix --> delete em pointers
-  getYarded(exp, stackH, queueF, queueB);
-  cout<<"Postfix: "<<endl;
-  //then...uh...go through queue
-  Node* temp = nullptr;
-  temp = queueF;
-  while(temp != nullptr){
-    cout<<temp->getD()<<endl;
-    temp = temp->getN();
+  mkVect(expression, exp);//make it a vector
+  for(vector<string>::iterator it = exp->begin(); it != exp->end(); ++it){
+    cout<<(*it)<<endl;
   }
+
+  //TEST
+  test();
+  
+  //do shunting yard stuff --> stack and queue --> postfix --> delete em pointer
+  getYarded(exp, stackH, queueF, queueB);
+  cout<<"Postfix: "<<endl;//cout postfix
+  printQueue(queueF);
+
   //put into binary expression tree
   biTree();
+
   //ask user how they'd like their expression
   cout<<"How would you like your expression? Rare, medium, or well done?"<<endl;
   cout<<"[po] postfix, [pr] prefix, [in] infix, [al/any other value] all of them"<<endl;
   cin>>notation;
   cin.ignore(10,'\n');
   cin.clear();
+
   //output accordingly
   if(strcmp(notation, "pr")==0){
     //result = prefix();
@@ -91,11 +101,67 @@ int main(){
   return 0;
 }
 
+void printStack(Node* head){
+  while(head != nullptr){
+    cout<<head->getD()<<endl;
+    head = head -> getN();
+  }
+  cout<<"done"<<endl;
+}
+void printQueue(Node* head){
+  while(head != nullptr){
+    cout<<head->getD()<<endl;
+    head = head -> getN();
+  }
+  cout<<"done"<<endl;
+}
+
+void test(){
+  Node* stackH = nullptr;//head of stack LL --> opperators
+  Node* queueF = nullptr;//front of queue LL//first in first out-add to back, take from front
+  Node* queueB = nullptr;//back of queue LL --> queue is output
+  Node* tempN = nullptr;
+  for(int i = 0; i < 5; i++){//push
+    tempN = new Node;
+    tempN -> setD("a");
+    if(stackH == nullptr){
+      stackH = tempN;
+    }
+    else{
+      push(tempN, stackH);
+    }
+  }
+  printStack(stackH);
+  for(int i = 0; i<5; i++){//pop
+    tempN = pop(stackH);
+    delete tempN;
+  }
+  printStack(stackH);
+  for(int i = 0; i < 5; i ++){//enqueue
+    tempN = new Node;
+    tempN -> setD("b");
+    if(queueF == nullptr){
+      queueF = tempN;
+      queueB = tempN;
+    }
+    else{
+      enqueue(tempN, queueB);
+    }
+  }
+  printQueue(queueF);
+  for(int i = 0; i < 5; i ++){//dequeue
+    tempN = dequeue(queueF);
+    delete tempN;
+  }
+  printQueue(queueF);
+}
+
 void mkVect(string expression, vector<string>* exp){
   string temp = "";
   for(int i = 0; i < expression.length(); i++){
     if(expression[i]==' '){//moving onto next value due to " "
       exp->push_back(temp);
+      temp = "";
     }
     else{
       temp += expression[i];
@@ -107,22 +173,28 @@ void mkVect(string expression, vector<string>* exp){
 }
 
 void getYarded(vector<string>* exp, Node*& stackH, Node*& queueF, Node*& queueB){
-  string temp = "";
-  Node* newN = nullptr; 
+  Node* newN = nullptr;
   for(vector<string>::iterator it = exp->begin(); it != exp->end(); ++it){
-    //if ")"
+    //if "("
     if((*it) == ")"){
-      while(temp != "("){
-	
+      newN = stackH;
+      //pop and enqueue until you reach "("
+      while(newN->getD() != "("){
+	newN = pop(stackH);
+	enqueue(newN, queueB);
+	newN = stackH;
       }
+      //then get rid of the "("...pop
+      newN = pop(stackH);
+      delete newN;
+      newN = nullptr;
     }
-    //if number --> queue
-    else if(isdigit((*it))){
+    //else if number
+    else if(isdigit((*it)[0])){
+      //first in queue
       newN = new Node;
-      newN -> setD((*it));
+      newN->setD((*it));
       if(queueF == nullptr){
-	queueF = new Node;
-	queueB = new Node;
 	queueF = newN;
 	queueB = newN;
       }
@@ -130,25 +202,31 @@ void getYarded(vector<string>* exp, Node*& stackH, Node*& queueF, Node*& queueB)
 	enqueue(newN, queueB);
       }
     }
-    //if operator --> stack
+    //else if operator
     else{
-      if(stackH == nullptr){
-	stackH = new Node;
+      newN = new Node;
+      newN->setD((*it));
+      //first in stack
+      if(stackH==nullptr){
 	stackH = newN;
       }
       else{
-	newN = new Node;
-	newN->setD((*it));
 	push(newN, stackH);
       }
     }
+  }//end the iterating.
+  //when finished, queue everything left in stack
+  while(stackH != nullptr){
+    newN = pop(stackH);
+    enqueue(newN, queueB);
   }
-  //put everything left in stack into queue
+  printStack(stackH);//give me nothing, please
+  printQueue(queueF);
   return;
 }
 
 Node* biTree(){
-  Node* head = new Node;
+  Node* head = nullptr;
   return head;
 }
 
@@ -162,10 +240,9 @@ Node* pop(Node*& stackH){
   return top;
 }
 
-void push(Node*& newN, Node*& stackH){
-  Node* temp = nullptr;
-  temp = stackH;
-  newN->setN(temp);
+void push(Node*& newN, Node*& stackH){//newN becomes the head(top) of the stack
+  Node* tempN = nullptr;
+  newN->setN(stackH);
   stackH = newN;
   return; 
 }
