@@ -286,25 +286,38 @@ Node* dequeue(Node*& queueF){//take out from front
 }
 
 void postfix(Node* current){
-  //go to rightmost
-  //recurse right
+  //go to leftmost
+  //recurse left
   if(current->getL() == nullptr){
     cout<<current->getD();
-    return;//return if right doesnt exist 
+    return;//return if left doesnt exist 
   }
   if(current->getL() != nullptr){
     postfix(current->getL());
   }
-  //recurse left
+  //recurse right
   if(current->getR() != nullptr){
     postfix(current->getR());
   }
   cout<<current->getD();
 }
 
-void prefix(Node* treeH){
+void prefix(Node* current){
 
 }
-void infix(Node* treeH){
-
+void infix(Node* current){
+  //left
+  if(current->getL() == nullptr){
+    cout<<current->getD();
+    return;
+  }
+  else{
+    cout<<"(";
+    infix(current->getL());
+  }
+  //current
+  cout<<current->getD();
+  //right
+  infix(current->getR());
+  cout<<")";
 }
