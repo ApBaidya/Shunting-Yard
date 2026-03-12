@@ -1,15 +1,9 @@
 /*
-Aparajita Baidya 3.7.2026
+Aparajita Baidya 3.12.2026
 Time to Shunt the yard (or something)
 to do:
-BiTreeNode class
-make a stack LL and queue LL --> do the sy algo -->then Binary Expression Tree
-So, put nums into queue and operators into stack
-pop
-push
-peek
-enqueue
-dequeue
+Binary tree
+output functions
 */
 
 #include <iostream>
@@ -21,15 +15,15 @@ dequeue
 //func defs.
 void mkVect(string expression, vector<string>*);
 void getYarded(vector<string>*, Node*& stackH, Node*& queueF, Node*& queueB);//gonna shunt the yard as the kids say 
-Node* biTree();//make the binary expression tree 
+void biTree(Node*& queueF, Node*& treeH);//make the binary expression tree 
 Node* pop(Node*& stackH);//stack
 void push(Node*& newN, Node*& stackH);
 Node* peek(Node* stackH);
 void enqueue(Node*& newN, Node*& queueB);//queue...add to rear
 Node* dequeue(Node*& queueF);//remove from front
-string postfix();
-string prefix();
-string infix();
+void postfix(Node* treeH);
+void prefix(Node* treeH);
+void infix(Node* treeH);
 
 void test(); 
 void printStack(Node* head);
@@ -40,7 +34,6 @@ using namespace std;
 int main(){
   //Set up some sillies.
   string expression;//unser entered expression
-  string result;//output expression
   char* notation = new char[3];//desired notation;
   Node* stackH = nullptr;//head of stack LL --> opperators
   Node* queueF = nullptr;//front of queue LL//first in first out-add to back, take from front
@@ -59,16 +52,17 @@ int main(){
   }
 
   //TEST
-  test();
+  //test();
   
   //do shunting yard stuff --> stack and queue --> postfix --> delete em pointer
   getYarded(exp, stackH, queueF, queueB);
   cout<<"Postfix: "<<endl;//cout postfix
   printQueue(queueF);
-
+  cout<<"putting into expression tree"<<endl;
   //put into binary expression tree
-  biTree();
-
+  biTree(queueF, treeH);
+  cout<<"done with setting up expression tree"<<endl;
+  
   //ask user how they'd like their expression
   cout<<"How would you like your expression? Rare, medium, or well done?"<<endl;
   cout<<"[po] postfix, [pr] prefix, [in] infix, [al/any other value] all of them"<<endl;
@@ -78,24 +72,30 @@ int main(){
 
   //output accordingly
   if(strcmp(notation, "pr")==0){
-    //result = prefix();
-    cout<<result<<endl;
+    cout<<"prefix:"<<endl;
+    prefix(treeH);
+    cout<<endl;
   }
   else if(strcmp(notation, "po")==0){
-    //result = postfix();
-    cout<<result<<endl;
+    cout<<"postfix:"<<endl;
+    postfix(treeH);
+    cout<<endl;
   }
   else if(strcmp(notation, "in")==0){
-    //result = infix();
-    cout<<result<<endl;
+    cout<<"infix:"<<endl;
+    infix(treeH);
+    cout<<endl;
   }
   else{
-    //result = prefix();
-    cout<<"prefix:"<<result<<endl;
-    //result = postfix();
-    cout<<"postfix:"<<result<<endl;
-    //result = infix();
-    cout<<"infix:"<<result<<endl;
+    cout<<"prefix:"<<endl;
+    prefix(treeH);
+    cout<<endl;
+    cout<<"postfix:"<<endl;
+    postfix(treeH);
+    cout<<endl;
+    cout<<"infix:"<<endl;
+    infix(treeH);
+    cout<<endl;
   }
   cout<<"BYE"<<endl;
   return 0;
@@ -225,9 +225,27 @@ void getYarded(vector<string>* exp, Node*& stackH, Node*& queueF, Node*& queueB)
   return;
 }
 
-Node* biTree(){
-  Node* head = nullptr;
-  return head;
+void biTree(Node*& queueF, Node*& treeH){
+  //so, go through the queue, pop and add to temp stack
+  Node* right = nullptr;
+  Node* left = nullptr;;
+  Node* newN = nullptr;
+  while(queueF != nullptr){//go through queue
+    newN = dequeue(queueF);
+    if(isdigit(newN->getD()[0]) == false){//operator --> make tiny tree
+      //pop right then left --> make left and right to node
+      right = pop(treeH);
+      left = pop(treeH);
+      newN -> setR(right);
+      newN -> setL(left);
+      //push
+      push(newN, treeH);
+    }
+    else{//number
+      push(newN, treeH);//push into temp stack
+    }
+  }
+  return;
 }
 
 Node* pop(Node*& stackH){
@@ -241,7 +259,6 @@ Node* pop(Node*& stackH){
 }
 
 void push(Node*& newN, Node*& stackH){//newN becomes the head(top) of the stack
-  Node* tempN = nullptr;
   newN->setN(stackH);
   stackH = newN;
   return; 
@@ -267,10 +284,8 @@ Node* dequeue(Node*& queueF){//take out from front
   queueF = temp;
   return front;
 }
-/*
-string postfix(){
+
+void postfix(Node* treeH){}
+void prefix(Node* treeH){
 }
-string prefix(){
-}
-string infix(){
-}*/
+void infix(Node* treeH){}
