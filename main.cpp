@@ -289,7 +289,7 @@ void postfix(Node* current){
   //go to leftmost
   //recurse left
   if(current->getL() == nullptr){
-    cout<<current->getD();
+    cout<<current->getD()<< " ";
     return;//return if left doesnt exist 
   }
   if(current->getL() != nullptr){
@@ -299,16 +299,23 @@ void postfix(Node* current){
   if(current->getR() != nullptr){
     postfix(current->getR());
   }
-  cout<<current->getD();
+  cout<<current->getD()<<" ";
 }
 
 void prefix(Node* current){
-
+  cout<<current->getD()<< " ";
+  if(current->getL() == nullptr){
+    return;
+  }
+  else{
+    prefix(current->getL());
+  }
+  prefix(current->getR());
 }
 void infix(Node* current){
   //left
   if(current->getL() == nullptr){
-    cout<<current->getD();
+    cout<<current->getD()<< " ";
     return;
   }
   else{
@@ -316,7 +323,7 @@ void infix(Node* current){
     infix(current->getL());
   }
   //current
-  cout<<current->getD();
+  cout<<current->getD()<< " ";
   //right
   infix(current->getR());
   cout<<")";
