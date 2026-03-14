@@ -9,9 +9,9 @@ Node::Node(){
   next = nullptr;
 }
 Node::~Node(){
-  right = nullptr;
-  left = nullptr;
   next = nullptr;
+  left = nullptr;
+  right = nullptr;
 }
 
 void Node::setR(Node* r){
