@@ -1,5 +1,5 @@
 /*
-Aparajita Baidya 3.12.2026
+Aparajita Baidya 3.13.2026
 Time to Shunt the yard (or something)
 to do:
 Binary tree
@@ -24,6 +24,7 @@ Node* dequeue(Node*& queueF);//remove from front
 void postfix(Node* treeH);
 void prefix(Node* treeH);
 void infix(Node* treeH);
+void deleteTree(Node* treeH);
 
 void test(); 
 void printStack(Node* head);
@@ -33,7 +34,7 @@ using namespace std;
 
 int main(){
   //Set up some sillies.
-  string expression;//unser entered expression
+  string expression;//unser evoid deleteTree(Node* treeH);ntered expression
   char* notation = new char[3];//desired notation;
   Node* stackH = nullptr;//head of stack LL --> opperators
   Node* queueF = nullptr;//front of queue LL//first in first out-add to back, take from front
@@ -97,6 +98,13 @@ int main(){
     infix(treeH);
     cout<<endl;
   }
+  //delete queueB;
+  cout<<treeH->getD()<<endl;
+  cout<<"..."<<endl;
+  printStack(stackH);
+  printQueue(queueF);
+  cout<<"....."<<endl;
+  deleteTree(treeH);
   cout<<"BYE"<<endl;
   return 0;
 }
@@ -228,10 +236,10 @@ void getYarded(vector<string>* exp, Node*& stackH, Node*& queueF, Node*& queueB)
 void biTree(Node*& queueF, Node*& treeH){
   //so, go through the queue, pop and add to temp stack
   Node* right = nullptr;
-  Node* left = nullptr;;
+  Node* left = nullptr;
   Node* newN = nullptr;
   while(queueF != nullptr){//go through queue
-    newN = dequeue(queueF);
+    newN = dequeue(queueF);//essentially, nothing left will remain in the queue after this;
     if(isdigit(newN->getD()[0]) == false){//operator --> make tiny tree
       //pop right then left --> make left and right to node
       right = pop(treeH);
@@ -328,3 +336,33 @@ void infix(Node* current){
   infix(current->getR());
   cout<<")";
 }
+
+void deleteTree(Node* current){//sort of like postfix movement down tree?
+  cout<<"delete"<<endl;
+  if(current != nullptr){
+    cout<<"getD"<<endl;
+    string data = current->getD();
+    cout<<"in print"<<endl;
+    cout<<current->getD()<<endl;
+  }
+  if(current == nullptr){//nothing left to delete in branch
+    cout<<"returning"<<endl;
+    return;
+  }
+  cout<<"cont"<<endl;
+  //go to leftmost
+  if(current->getL()!= nullptr){
+    cout<<"1"<<endl;
+    deleteTree(current->getL());
+  }
+  if(current->getR()!=nullptr){
+    //go right
+    cout<<"2"<<endl;
+    deleteTree(current->getR());
+  }
+  //delete self
+  cout<<"3"<<endl;
+  //delete current;
+  cout<<"4"<<endl;
+}
+
