@@ -26,6 +26,8 @@ void prefix(Node* treeH);
 void infix(Node* treeH);
 void deleteTree(Node* treeH);
 
+int checkPrec(string nodeD);
+
 void test(); 
 void printStack(Node* head);
 void printQueue(Node* head);
@@ -41,20 +43,21 @@ int main(){
   Node* queueB = nullptr;//back of queue LL --> queue is output
   Node* treeH = nullptr;//for the tree stack. a stack of trees.
   vector<string>* exp = new vector<string>();//gonna make a vector to pass into Shunting yard function
-
+  exp->push_back("(");
   //lets get to it, then
   cout<<"please enter your expression (infix notation)"<<endl;
   getline(cin, expression);
   cin.clear();
-  //cout<<"oookay, "<<expression<<endl;
+  cout<<"oookay, "<<expression<<endl;
   mkVect(expression, exp);//make it a vector
+  exp -> push_back(")");
   for(vector<string>::iterator it = exp->begin(); it != exp->end(); ++it){
     cout<<(*it)<<endl;
   }
 
   //TEST
   //test();
-  
+  cout<<"yard time"<<endl;
   //do shunting yard stuff --> stack and queue --> postfix --> delete em pointer
   getYarded(exp, stackH, queueF, queueB);
   cout<<"Postfix: "<<endl;//cout postfix
@@ -167,24 +170,49 @@ void test(){
 void mkVect(string expression, vector<string>* exp){
   string temp = "";
   for(int i = 0; i < expression.length(); i++){
+    cout<<"a"<<endl;
     if(expression[i]==' '){//moving onto next value due to " "
       exp->push_back(temp);
       temp = "";
     }
     else{
+      cout<<"b"<<endl;
       temp += expression[i];
     }
   }
-  //now, there'll be something after the last space
-  exp->push_back(temp);
+  exp -> push_back(temp);
+  cout<<"vector done"<<endl;
   return;
+}
+
+int checkPrec(string nodeD){
+  if(nodeD == "^"){
+    return 4;
+  }
+  else if (nodeD == "*"){
+    return 3;
+  }
+  else if (nodeD == "/"){
+    return 3;
+  }
+  else if (nodeD == "+"){
+    return 2;
+  }
+  else if (nodeD == "-"){
+    return 2;
+  }
+  return 0;
 }
 
 void getYarded(vector<string>* exp, Node*& stackH, Node*& queueF, Node*& queueB){
   Node* newN = nullptr;
+  Node* temp = nullptr;
+  int precC;//precedence value for current node
+  int precS;//precedence value for stack head
   for(vector<string>::iterator it = exp->begin(); it != exp->end(); ++it){
     //if "("
     if((*it) == ")"){
+      cout<<"pop time"<<endl;
       newN = stackH;
       //pop and enqueue until you reach "("
       while(newN->getD() != "("){
@@ -193,6 +221,7 @@ void getYarded(vector<string>* exp, Node*& stackH, Node*& queueF, Node*& queueB)
 	newN = stackH;
       }
       //then get rid of the "("...pop
+      cout<<"got rid of ("<<endl;
       newN = pop(stackH);
       delete newN;
       newN = nullptr;
@@ -200,6 +229,7 @@ void getYarded(vector<string>* exp, Node*& stackH, Node*& queueF, Node*& queueB)
     //else if number
     else if(isdigit((*it)[0])){
       //first in queue
+      cout<<"digit"<<endl;
       newN = new Node;
       newN->setD((*it));
       if(queueF == nullptr){
@@ -210,15 +240,31 @@ void getYarded(vector<string>* exp, Node*& stackH, Node*& queueF, Node*& queueB)
 	enqueue(newN, queueB);
       }
     }
-    //else if operator
+    //else if operator --> consider precedence
     else{
+      cout<<"operator"<<endl;
       newN = new Node;
       newN->setD((*it));
-      //first in stack
-      if(stackH==nullptr){
-	stackH = newN;
+      if(stackH != nullptr){
+	precS = checkPrec(stackH->getD());
+	precC = checkPrec((*it));
       }
-      else{
+      if((*it) == "("){
+	push(newN, stackH);
+      }
+      //check if value in stack has higher precedence
+      else if(precC <= precS){//current precedence is lower than stackH
+	cout<<"a"<<endl;
+	temp = pop(stackH);
+	enqueue(temp, queueB);
+	push(newN, stackH);
+      }
+      else if(precC > precS){//current precendence is higher than stackH
+	cout<<"b"<<endl;
+	push(newN, stackH);
+      }
+      else if (precC == 4){//current is ^...is right associated 
+	cout<<"c"<<endl;
 	push(newN, stackH);
       }
     }
@@ -267,8 +313,13 @@ Node* pop(Node*& stackH){
 }
 
 void push(Node*& newN, Node*& stackH){//newN becomes the head(top) of the stack
-  newN->setN(stackH);
-  stackH = newN;
+  if (stackH == nullptr){
+    stackH = newN;
+  }
+  else{
+    newN->setN(stackH);
+    stackH = newN;
+  }
   return; 
 }
 
