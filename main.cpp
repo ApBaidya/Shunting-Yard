@@ -46,7 +46,7 @@ int main(){
   cout<<"please enter your expression (infix notation)"<<endl;
   getline(cin, expression);
   cin.clear();
-  cout<<"oookay, "<<expression<<endl;
+  //cout<<"oookay, "<<expression<<endl;
   mkVect(expression, exp);//make it a vector
   for(vector<string>::iterator it = exp->begin(); it != exp->end(); ++it){
     cout<<(*it)<<endl;
@@ -99,11 +99,11 @@ int main(){
     cout<<endl;
   }
   //delete queueB;
-  cout<<treeH->getD()<<endl;
-  cout<<"..."<<endl;
-  printStack(stackH);
-  printQueue(queueF);
-  cout<<"....."<<endl;
+  //cout<<treeH->getD()<<endl;
+  //cout<<"..."<<endl;
+  //printStack(stackH);
+  //printQueue(queueF);
+  //cout<<"....."<<endl;
   deleteTree(treeH);
   cout<<"BYE"<<endl;
   return 0;
@@ -338,31 +338,31 @@ void infix(Node* current){
 }
 
 void deleteTree(Node* current){//sort of like postfix movement down tree?
-  cout<<"delete"<<endl;
+  //cout<<"delete"<<endl;
   if(current != nullptr){
-    cout<<"getD"<<endl;
+    //cout<<"getD"<<endl;
     string data = current->getD();
-    cout<<"in print"<<endl;
-    cout<<current->getD()<<endl;
+    //cout<<"in print"<<endl;
+    //cout<<current->getD()<<endl;
   }
   if(current == nullptr){//nothing left to delete in branch
-    cout<<"returning"<<endl;
+    //cout<<"returning"<<endl;
     return;
   }
-  cout<<"cont"<<endl;
+  //cout<<"cont"<<endl;
   //go to leftmost
   if(current->getL()!= nullptr){
-    cout<<"1"<<endl;
+    //cout<<"1"<<endl;
     deleteTree(current->getL());
   }
   if(current->getR()!=nullptr){
     //go right
-    cout<<"2"<<endl;
+    //cout<<"2"<<endl;
     deleteTree(current->getR());
   }
   //delete self
-  cout<<"3"<<endl;
+  //cout<<"3"<<endl;
   //delete current;
-  cout<<"4"<<endl;
+  //cout<<"4"<<endl;
 }
 
