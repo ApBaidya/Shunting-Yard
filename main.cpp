@@ -1,5 +1,5 @@
 /*
-Aparajita Baidya 3.13.2026
+Aparajita Baidya 3.17.2026
 Time to Shunt the yard (or something)
 to do:
 Binary tree
@@ -108,6 +108,7 @@ int main(){
   //printQueue(queueF);
   //cout<<"....."<<endl;
   deleteTree(treeH);
+  exp->clear();
   cout<<"BYE"<<endl;
   return 0;
 }
@@ -170,13 +171,13 @@ void test(){
 void mkVect(string expression, vector<string>* exp){
   string temp = "";
   for(int i = 0; i < expression.length(); i++){
-    cout<<"a"<<endl;
+    //cout<<"a"<<endl;
     if(expression[i]==' '){//moving onto next value due to " "
       exp->push_back(temp);
       temp = "";
     }
     else{
-      cout<<"b"<<endl;
+      //cout<<"b"<<endl;
       temp += expression[i];
     }
   }
@@ -212,7 +213,7 @@ void getYarded(vector<string>* exp, Node*& stackH, Node*& queueF, Node*& queueB)
   for(vector<string>::iterator it = exp->begin(); it != exp->end(); ++it){
     //if "("
     if((*it) == ")"){
-      cout<<"pop time"<<endl;
+      //cout<<"pop time"<<endl;
       newN = stackH;
       //pop and enqueue until you reach "("
       while(newN->getD() != "("){
@@ -221,7 +222,7 @@ void getYarded(vector<string>* exp, Node*& stackH, Node*& queueF, Node*& queueB)
 	newN = stackH;
       }
       //then get rid of the "("...pop
-      cout<<"got rid of ("<<endl;
+      //cout<<"got rid of ("<<endl;
       newN = pop(stackH);
       delete newN;
       newN = nullptr;
@@ -229,7 +230,7 @@ void getYarded(vector<string>* exp, Node*& stackH, Node*& queueF, Node*& queueB)
     //else if number
     else if(isdigit((*it)[0])){
       //first in queue
-      cout<<"digit"<<endl;
+      //cout<<"digit"<<endl;
       newN = new Node;
       newN->setD((*it));
       if(queueF == nullptr){
@@ -242,7 +243,7 @@ void getYarded(vector<string>* exp, Node*& stackH, Node*& queueF, Node*& queueB)
     }
     //else if operator --> consider precedence
     else{
-      cout<<"operator"<<endl;
+      //cout<<"operator"<<endl;
       newN = new Node;
       newN->setD((*it));
       if(stackH != nullptr){
@@ -254,17 +255,17 @@ void getYarded(vector<string>* exp, Node*& stackH, Node*& queueF, Node*& queueB)
       }
       //check if value in stack has higher precedence
       else if(precC <= precS){//current precedence is lower than stackH
-	cout<<"a"<<endl;
+	//cout<<"a"<<endl;
 	temp = pop(stackH);
 	enqueue(temp, queueB);
 	push(newN, stackH);
       }
       else if(precC > precS){//current precendence is higher than stackH
-	cout<<"b"<<endl;
+	//cout<<"b"<<endl;
 	push(newN, stackH);
       }
       else if (precC == 4){//current is ^...is right associated 
-	cout<<"c"<<endl;
+	//cout<<"c"<<endl;
 	push(newN, stackH);
       }
     }
@@ -416,4 +417,3 @@ void deleteTree(Node* current){//sort of like postfix movement down tree?
   //delete current;
   //cout<<"4"<<endl;
 }
-
