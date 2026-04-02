@@ -390,13 +390,6 @@ void infix(Node* current){
 }
 
 void deleteTree(Node* current){//sort of like postfix movement down tree?
-  //cout<<"delete"<<endl;
-  if(current != nullptr){
-    //cout<<"getD"<<endl;
-    string data = current->getD();
-    //cout<<"in print"<<endl;
-    //cout<<current->getD()<<endl;
-  }
   if(current == nullptr){//nothing left to delete in branch
     //cout<<"returning"<<endl;
     return;
@@ -414,6 +407,6 @@ void deleteTree(Node* current){//sort of like postfix movement down tree?
   }
   //delete self
   //cout<<"3"<<endl;
-  //delete current;
+  delete current;
   //cout<<"4"<<endl;
 }
